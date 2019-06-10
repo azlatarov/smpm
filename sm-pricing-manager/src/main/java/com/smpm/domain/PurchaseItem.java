@@ -1,6 +1,7 @@
 package com.smpm.domain;
 
 import com.smpm.functional.Predicates;
+import com.smpm.functional.TriPredicate;
 
 import static com.smpm.functional.Predicates.*;
 
@@ -8,15 +9,17 @@ import static com.smpm.functional.Predicates.*;
 
 public class PurchaseItem {
 	private static final double DEFAULT_PRICE = 0.01D;
+	public static final TriPredicate<PurchaseItem, String, PurchaseItemType> isEqualTo = 
+			(item, name, type) -> item.getName().equalsIgnoreCase(name) && item.getType().equals(type);
 	
 	private String name;
 	private PurchaseItemType type;
-	private UnitPrice unitPrice;
+	private Price unitPrice;
 	private PurchaseItemStatus status;
 	
 	private PurchaseItem() {}
 	
-	public static PurchaseItem getInstance(String name, PurchaseItemType type, UnitPrice unitPrice, PurchaseItemStatus status) 
+	public static PurchaseItem getInstance(String name, PurchaseItemType type, Price unitPrice, PurchaseItemStatus status) 
 			throws IllegalArgumentException {
 		if (Predicates.<String>isNull().or(isEmpty()).test(name) 
 				|| isNull().test(type))
@@ -25,7 +28,7 @@ public class PurchaseItem {
 		PurchaseItem INSTANCE = new PurchaseItem();
 		return INSTANCE.setName(name)
 						.setType(type)
-						.setUnitPrice(isNull().test(unitPrice) ? UnitPrice.getInstance(DEFAULT_PRICE) : unitPrice)
+						.setUnitPrice(isNull().test(unitPrice) ? Price.getInstance(DEFAULT_PRICE) : unitPrice)
 						.setStatus(isNull().test(status) ? PurchaseItemStatus.ACTIVE : status);
 	}
 
@@ -47,11 +50,11 @@ public class PurchaseItem {
 		return this;
 	}
 
-	public UnitPrice getUnitPrice() {
+	public Price getUnitPrice() {
 		return unitPrice;
 	}
 
-	public PurchaseItem setUnitPrice(UnitPrice unitPrice) {
+	public PurchaseItem setUnitPrice(Price unitPrice) {
 		this.unitPrice = unitPrice;
 		return this;
 	}
@@ -74,7 +77,7 @@ public class PurchaseItem {
         
         PurchaseItem item = (PurchaseItem) o;
         
-		return item.getName().equalsIgnoreCase(name) && item.getType().equals(type);
+		return isEqualTo.test(item, name, type);
 	}
 	
     @Override

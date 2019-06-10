@@ -4,22 +4,25 @@ import com.smpm.functional.Predicates;
 
 import static com.smpm.functional.Predicates.*;
 
+import java.util.function.DoubleUnaryOperator;
+
 import com.smpm.PricingManager;
 
 
 
-public class UnitPrice {
+public class Price {
+	private static DoubleUnaryOperator roundOffTo2 = (double d) -> Math.round(d * 100.00) / 100.00;
 	
 	private double value;
 	private static String currencySymbol;
 	
-	private UnitPrice() {}
+	private Price() {}
 	
 	static {
 		currencySymbol = System.getProperty(PricingManager.CURRENCY_SYMBOL_PROPERTY);
 	}
 	
-	public static UnitPrice getInstance(double value) throws IllegalArgumentException {
+	public static Price getInstance(double value) throws IllegalArgumentException {
 		if (isPositive().negate().test(value)) {
 			throw new IllegalArgumentException("Unit price cannot have non-positive value.");
 		}
@@ -27,7 +30,7 @@ public class UnitPrice {
 		if (Predicates.<String>isNull().or(isEmpty()).test(currencySymbol))
 			throw new IllegalStateException("Highly unlikely, but currency is not set for the application!");
 		
-		UnitPrice INSTANCE = new UnitPrice();
+		Price INSTANCE = new Price();
 		return INSTANCE.setValue(value);
 	}
 	
@@ -37,8 +40,8 @@ public class UnitPrice {
 	public double getValue() {
 		return value;
 	}
-	private UnitPrice setValue(double value) {
-		this.value = Math.round(value * 100.00) / 100.00;
+	private Price setValue(double value) {
+		this.value = roundOffTo2.applyAsDouble(value);
 		return this;
 	}
 
