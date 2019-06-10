@@ -1,47 +1,77 @@
 package com.smpm.pricing;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.smpm.domain.PurchaseItem;
 import com.smpm.domain.PurchaseItemType;
 import com.smpm.domain.UnitPrice;
 
+
+
 /**
- * This class simulates a data-set of purchase items.
- * It can be loaded lazy or proactively.
+ * This class simulates a data-set of purchase items to pick from.
  * @author azlatarov
  */
 public class PriceList {
-	public static List<PurchaseItem> priceList = new ArrayList<>();
+	public static Set<PurchaseItem> items = new HashSet<>();
+	
+	private PriceList() {}
+	
+	public static PriceList getInstance() {
+		return PriceList.Helper.INSTANCE;
+	}
+	
+	private static class Helper {
+		private static final PriceList INSTANCE = new PriceList();
+	}
 	
 	static {
-		initialize();
+		preloadPurchaseItems();
 	}
 	
-	public static final void initialize() {
-		addItemToPriceList("Beans", PurchaseItemType.BY_COUNT, 0.50D);
-		addItemToPriceList("Coke", PurchaseItemType.BY_COUNT, 0.70D);
-		addItemToPriceList("Roobar w. choco chips", PurchaseItemType.BY_COUNT, 0.80D);
-		addItemToPriceList("Oranges", PurchaseItemType.BY_WEIGHT, 1.99D);
-		addItemToPriceList("Tomatoes", PurchaseItemType.BY_WEIGHT, 1.54D);
-		addItemToPriceList("Cucumbers", PurchaseItemType.BY_WEIGHT, 0.89D);
+	/**
+	 * Method simulates preloading of data from persistent data store.
+	 */
+	private static final void preloadPurchaseItems() {
+		addOrUpdateItem("Beans", PurchaseItemType.BY_COUNT, 0.50D);
+		addOrUpdateItem("Coke", PurchaseItemType.BY_COUNT, 0.70D);
+		addOrUpdateItem("Roobar w. choco chips", PurchaseItemType.BY_COUNT, 0.80D);
+		addOrUpdateItem("Avocado", PurchaseItemType.BY_COUNT, 2.10D);
+		addOrUpdateItem("Avocado", PurchaseItemType.BY_WEIGHT, 5.50D);
+		addOrUpdateItem("Oranges", PurchaseItemType.BY_WEIGHT, 1.99D);
+		addOrUpdateItem("Tomatoes", PurchaseItemType.BY_WEIGHT, 1.54D);
+		addOrUpdateItem("Cucumbers", PurchaseItemType.BY_WEIGHT, 0.89D);
 	}
 	
-	public static final boolean addItemToPriceList (String itemName, PurchaseItemType itemType, double itemSinglePrice) {
-		Optional<PurchaseItem> existingItem = priceList.parallelStream().filter(item -> item.getName().equalsIgnoreCase(itemName))
-												.findAny();
+	public static final boolean addOrUpdateItem(String itemName, PurchaseItemType itemType, double itemSinglePrice) {
+		boolean result = false;
 		
-		if (existingItem.isPresent()) {
-			// TODO - handle potential duplicate i.e. log warning/error, display warning/error in AdminUI, etc.;
-			//			use existingItem data to be specific;
-			return false;
+		try {
+			PurchaseItem item = PurchaseItem.getInstance(itemName, itemType, UnitPrice.getInstance(itemSinglePrice), null);
+			
+			if (items.contains(item))
+				items.remove(item);
+				
+			result = items.add(item);
+		} catch (IllegalArgumentException iae) {
+			// log event
 		}
 		
-		return priceList.add(PurchaseItem.getInstance(itemName, itemType, UnitPrice.getInstance(itemSinglePrice), null));
+		return result;
 	}
 	
-	// TODO - add functionality to alter list besides adding
+	public static final boolean removeItem(String itemName, PurchaseItemType itemType) {
+		boolean result = false;
+		
+		try {
+			PurchaseItem item = PurchaseItem.getInstance(itemName, itemType, null, null);
+			result = items.contains(item) ? items.remove(item) : result;
+		} catch (IllegalArgumentException iae) {
+			// log event
+		}
+		
+		return result;
+	}
 	
 }

@@ -28,15 +28,11 @@ public class UnitPrice {
 			throw new IllegalStateException("Highly unlikely, but currency is not set for the application!");
 		
 		UnitPrice INSTANCE = new UnitPrice();
-		return INSTANCE.setCurrencySymbol(currencySymbol).setValue(value);
+		return INSTANCE.setValue(value);
 	}
 	
 	public String getCurrencySymbol() {
 		return currencySymbol;
-	}
-	private UnitPrice setCurrencySymbol(String currencySymbol) {
-		this.currencySymbol = currencySymbol;
-		return this;
 	}
 	public double getValue() {
 		return value;

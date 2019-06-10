@@ -9,14 +9,14 @@ public class PricingManager {
 	public static void main(String[] args) {
 		// TODO - add option to change currency via program parameter
 		
-		run();
+		start();
 	}
 	
-	public static void run() {
+	public static void start() {
 		System.setProperty(CURRENCY_SYMBOL_PROPERTY, "£");
-		PriceList.initialize();
+		PriceList currentList = PriceList.getInstance();
 		
-		// TODO - prepare for servicing purchase requests
+		// TODO - handle receipts
 	}
 
 }

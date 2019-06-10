@@ -7,6 +7,8 @@ import static com.smpm.functional.Predicates.*;
 
 
 public class PurchaseItem {
+	private static final double DEFAULT_PRICE = 0.01D;
+	
 	private String name;
 	private PurchaseItemType type;
 	private UnitPrice unitPrice;
@@ -17,17 +19,14 @@ public class PurchaseItem {
 	public static PurchaseItem getInstance(String name, PurchaseItemType type, UnitPrice unitPrice, PurchaseItemStatus status) 
 			throws IllegalArgumentException {
 		if (Predicates.<String>isNull().or(isEmpty()).test(name) 
-				|| isNull().test(type) 
-				|| isNull().test(unitPrice))
-			throw new IllegalArgumentException("Name, type and price are required purchase item properties. ");
-		
-		// TODO - handle situation where item with same name exists
-		
-		if (isNull().test(status))
-			status = PurchaseItemStatus.ACTIVE;
+				|| isNull().test(type))
+			throw new IllegalArgumentException("Name and type are required purchase item properties. ");
 		
 		PurchaseItem INSTANCE = new PurchaseItem();
-		return INSTANCE.setName(name).setType(type).setUnitPrice(unitPrice);
+		return INSTANCE.setName(name)
+						.setType(type)
+						.setUnitPrice(isNull().test(unitPrice) ? UnitPrice.getInstance(DEFAULT_PRICE) : unitPrice)
+						.setStatus(isNull().test(status) ? PurchaseItemStatus.ACTIVE : status);
 	}
 
 	public String getName() {
@@ -52,7 +51,7 @@ public class PurchaseItem {
 		return unitPrice;
 	}
 
-	private PurchaseItem setUnitPrice(UnitPrice unitPrice) {
+	public PurchaseItem setUnitPrice(UnitPrice unitPrice) {
 		this.unitPrice = unitPrice;
 		return this;
 	}
@@ -66,4 +65,23 @@ public class PurchaseItem {
 		return this;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof PurchaseItem)) {
+            return false;
+        }
+        
+        PurchaseItem item = (PurchaseItem) o;
+        
+		return item.getName().equalsIgnoreCase(name) && item.getType().equals(type);
+	}
+	
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 }
