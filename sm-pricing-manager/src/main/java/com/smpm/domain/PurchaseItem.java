@@ -2,8 +2,12 @@ package com.smpm.domain;
 
 import com.smpm.functional.Predicates;
 import com.smpm.functional.TriPredicate;
+import com.smpm.pricing.PriceList;
 
 import static com.smpm.functional.Predicates.*;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 
 
@@ -11,6 +15,9 @@ public class PurchaseItem {
 	private static final double DEFAULT_PRICE = 0.01D;
 	public static final TriPredicate<PurchaseItem, String, PurchaseItemType> isEqualTo = 
 			(item, name, type) -> item.getName().equalsIgnoreCase(name) && item.getType().equals(type);
+	public static final BiFunction<String, PurchaseItemType, Optional<PurchaseItem>> getPurchaseItem = 
+		    (name, type) -> PriceList.getInstance().getAllPurchaseItems()
+		    				.filter(i -> i.getName().equals(name) && i.getType().equals(type)).findAny();
 	
 	private String name;
 	private PurchaseItemType type;
@@ -25,11 +32,18 @@ public class PurchaseItem {
 				|| isNull().test(type))
 			throw new IllegalArgumentException("Name and type are required purchase item properties. ");
 		
-		PurchaseItem INSTANCE = new PurchaseItem();
-		return INSTANCE.setName(name)
+		PurchaseItem instance = new PurchaseItem();
+		instance.setName(name)
 						.setType(type)
 						.setUnitPrice(isNull().test(unitPrice) ? Price.getInstance(DEFAULT_PRICE) : unitPrice)
 						.setStatus(isNull().test(status) ? PurchaseItemStatus.ACTIVE : status);
+		
+		/* TODO - allow initial population of price list, but further handling of purchase item should be validated as below
+		if(!getPurchaseItem.apply(name, type).isPresent())
+			throw new IllegalStateException("The purchase item needs be added to the price list before it can be used.");
+		*/
+		
+		return instance;
 	}
 
 	public String getName() {

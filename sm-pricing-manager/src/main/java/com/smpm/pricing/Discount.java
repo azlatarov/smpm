@@ -2,7 +2,6 @@ package com.smpm.pricing;
 
 import static com.smpm.functional.Predicates.isEmpty;
 import static com.smpm.functional.Predicates.isNull;
-import static com.smpm.functional.Predicates.isPositive;
 
 import com.smpm.domain.Price;
 import com.smpm.domain.PurchaseItem;
@@ -25,44 +24,42 @@ public class Discount {
 				|| isNull().test(priceOff))
 			throw new IllegalArgumentException("All discount properties are required. ");
 		
-		return Discount.Helper.INSTANCE
-				.setDiscountName(name).setDiscountItem(item).setTresholdQuantity(tresholdQuantity)
-				.setDiscountPrice(isPositive().test(priceOff.getValue()) ? Price.getInstance(priceOff.getValue() * -1) : priceOff);
+		return new Discount()
+				.setDiscountName(name)
+				.setDiscountItem(item)
+				.setTresholdQuantity(tresholdQuantity)
+				.setDiscountPrice(Price.getInstance(Math.abs(priceOff.getValue()) * -1));
 	}
 	
-	private static class Helper {
-		private static final Discount INSTANCE = new Discount();
-	}
-	
-	private String getDiscountName() {
+	public String getDiscountName() {
 		return discountName;
 	}
 	private Discount setDiscountName(String discountName) {
 		this.discountName = discountName;
 		return this;
 	}
-	private PurchaseItem getDiscountItem() {
+	public PurchaseItem getDiscountItem() {
 		return discountItem;
 	}
 	private Discount setDiscountItem(PurchaseItem discountItem) {
 		this.discountItem = discountItem;
 		return this;
 	}
-	private Double getTresholdQuantity() {
+	public Double getTresholdQuantity() {
 		return tresholdQuantity;
 	}
 	private Discount setTresholdQuantity(Double tresholdQuantity) {
 		this.tresholdQuantity = tresholdQuantity;
 		return this;
 	}
-	private Price getDiscountPrice() {
+	public Price getDiscountPrice() {
 		return discountPrice;
 	}
 	private Discount setDiscountPrice(Price discountPrice) {
 		this.discountPrice = discountPrice;
 		return this;
 	}
-	
+    
 	@Override
 	public boolean equals(Object o) {
         if (o == this) return true;
@@ -70,9 +67,9 @@ public class Discount {
             return false;
         }
         
-        Discount discount = (Discount) o;
+        Discount item = (Discount) o;
         
-		return discountItem.equals(discount.getDiscountItem());
+		return discountItem.equals(item.getDiscountItem());
 	}
 	
     @Override
@@ -80,5 +77,11 @@ public class Discount {
         int result = 17;
         result = 31 * result + discountItem.hashCode();
         return result;
+    }
+	
+    @Override
+    public String toString() {
+    	return ("Discount name : "+discountName+" | Discount Item {name, type} : {"+discountItem.getName()+", "+discountItem.getType()
+    			+"} | Discount tresholdQuantity : "+tresholdQuantity+" | discountPrice : "+discountPrice);
     }
 }

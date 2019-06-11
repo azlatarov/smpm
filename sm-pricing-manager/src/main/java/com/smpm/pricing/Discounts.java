@@ -4,8 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * All discounts currently active. A discount currently has no status, if it's present here it is active.
+ * Also, only 1 discount per purchase item is allowed, adding duplicates will be ignored.
+ * @author azlatarov
+ */
 public class Discounts {
-	private Set<Discount> discountSet = new HashSet<>();
+	private Set<Discount> discounts = new HashSet<>();
 	
 	private Discounts() {}
 	
@@ -18,14 +23,14 @@ public class Discounts {
 	}
 	
 	public boolean add(Discount discountToAdd) {
-		return discountSet.add(discountToAdd);
+		return discounts.add(discountToAdd);
 	}
 	
 	public boolean remove(Discount discountToRemove) {
-		return discountSet.remove(discountToRemove);
+		return discounts.remove(discountToRemove);
 	}
 	
 	public Stream<Discount> getAll() {
-		return discountSet.stream();
+		return discounts.stream();
 	}
 }

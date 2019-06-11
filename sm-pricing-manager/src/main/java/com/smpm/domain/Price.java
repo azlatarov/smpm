@@ -23,15 +23,11 @@ public class Price {
 	}
 	
 	public static Price getInstance(double value) throws IllegalArgumentException {
-		if (isPositive().negate().test(value)) {
-			throw new IllegalArgumentException("Unit price cannot have non-positive value.");
-		}
-		
 		if (Predicates.<String>isNull().or(isEmpty()).test(currencySymbol))
 			throw new IllegalStateException("Highly unlikely, but currency is not set for the application!");
 		
-		Price INSTANCE = new Price();
-		return INSTANCE.setValue(value);
+		Price instance = new Price();
+		return instance.setValue(value);
 	}
 	
 	public String getCurrencySymbol() {
@@ -43,6 +39,11 @@ public class Price {
 	private Price setValue(double value) {
 		this.value = roundOffTo2.applyAsDouble(value);
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getCurrencySymbol().concat(this.getValue()+"");
 	}
 
 }

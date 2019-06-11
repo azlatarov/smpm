@@ -19,7 +19,7 @@ import com.smpm.domain.Price;
  */
 public class PriceList {
 	
-	private static BiFunction<String, PurchaseItemType, Optional<PurchaseItem>> itemExists = 
+	public static BiFunction<String, PurchaseItemType, Optional<PurchaseItem>> itemExists = 
 			(name, type) -> Helper.INSTANCE.items.parallelStream().filter(i -> PurchaseItem.isEqualTo.test(i, name, type)).findAny();
 	
 	private Set<PurchaseItem> items = new HashSet<>();
