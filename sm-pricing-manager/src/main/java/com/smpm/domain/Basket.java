@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.DoubleUnaryOperator;
 
-import com.smpm.pricing.Discount;
 import com.smpm.pricing.Discounts;
 import com.smpm.pricing.PriceList;
 

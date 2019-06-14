@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.smpm.domain.Discount;
+
 /**
  * All discounts currently active. A discount currently has no status, if it's present here it is active.
  * Also, only 1 discount per purchase item is allowed, adding duplicates will be ignored.

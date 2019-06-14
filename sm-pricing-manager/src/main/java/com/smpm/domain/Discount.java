@@ -1,10 +1,8 @@
-package com.smpm.pricing;
+package com.smpm.domain;
 
 import static com.smpm.functional.Predicates.isEmpty;
 import static com.smpm.functional.Predicates.isNull;
 
-import com.smpm.domain.Price;
-import com.smpm.domain.PurchaseItem;
 import com.smpm.functional.Predicates;
 
 public class Discount {

@@ -4,11 +4,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.smpm.domain.Basket;
+import com.smpm.domain.Discount;
 import com.smpm.domain.Price;
 import com.smpm.domain.PurchaseItem;
 import com.smpm.domain.PurchaseItemType;
 import com.smpm.domain.Receipt;
-import com.smpm.pricing.Discount;
 import com.smpm.pricing.Discounts;
 import com.smpm.pricing.PriceList;
 
